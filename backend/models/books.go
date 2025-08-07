@@ -4,16 +4,15 @@ import (
 	"gorm.io/gorm"
 )
 
-type Books struct {
-	ID        uint    `gorm:"primaryKey;autoIncrement" json:"id"`
-	Author    *string `json:"author"`
-	Title     *string `json:"title"`
-	Publisher *string `json:"publisher"`
+type Task struct {
+	ID          uint    `gorm:"primaryKey;autoIncrement" json:"id"`
+	Description *string `json:"description"`
+	Date        *string `json:"date"`
 }
 
-func MigrateBooks(db *gorm.DB) error {
+func MigrateTasks(db *gorm.DB) error {
 
-	err := db.AutoMigrate(&Books{})
+	err := db.AutoMigrate(&Task{})
 
 	return err
 }

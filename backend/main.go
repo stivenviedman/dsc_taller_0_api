@@ -13,10 +13,9 @@ import (
 	"gorm.io/gorm"
 )
 
-type Book struct {
-	Author    string `json:"author"`
-	Title     string `json:"title"`
-	Publisher string `json:"publisher"`
+type Task struct {
+	Description string `json:"description"`
+	Date        string `json:"date"`
 }
 
 type Repository struct {
@@ -24,11 +23,11 @@ type Repository struct {
 }
 
 /*---Repository functions----*/
-func (r *Repository) CreateBook(context *fiber.Ctx) error {
+func (r *Repository) CreateTask(context *fiber.Ctx) error {
 
-	book := Book{}
+	task := Task{}
 
-	err := context.BodyParser(&book)
+	err := context.BodyParser(&task)
 
 	if err != nil {
 		context.Status(http.StatusUnprocessableEntity).JSON(
@@ -37,24 +36,24 @@ func (r *Repository) CreateBook(context *fiber.Ctx) error {
 		return err
 	}
 
-	errCreate := r.DB.Create(&book).Error
+	errCreate := r.DB.Create(&task).Error
 
 	if errCreate != nil {
 		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo crear el book"})
+			&fiber.Map{"message": "No se pudo crear el task"})
 
 		return err
 	}
 
 	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se creo el book corretamente"})
+		&fiber.Map{"message": "Se creo el task correctamente"})
 
 	return nil
 }
 
-func (r *Repository) DeleteBook(context *fiber.Ctx) error {
+func (r *Repository) DeleteTask(context *fiber.Ctx) error {
 
-	bookModel := models.Books{}
+	taskModel := models.Task{}
 	id := context.Params("id")
 
 	if id == "" {
@@ -64,24 +63,24 @@ func (r *Repository) DeleteBook(context *fiber.Ctx) error {
 		return nil
 	}
 
-	err := r.DB.Delete(bookModel, id)
+	err := r.DB.Delete(taskModel, id)
 
 	if err.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo eliminar el book"})
+			&fiber.Map{"message": "No se pudo eliminar el task"})
 
 		return err.Error
 	}
 
 	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se elimino el book corretamente"})
+		&fiber.Map{"message": "Se elimino el task corretamente"})
 
 	return nil
 }
 
-func (r *Repository) GetBookById(context *fiber.Ctx) error {
+func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 
-	bookModel := &models.Books{}
+	taskModel := &models.Task{}
 	id := context.Params("id")
 
 	if id == "" {
@@ -91,39 +90,39 @@ func (r *Repository) GetBookById(context *fiber.Ctx) error {
 		return nil
 	}
 
-	err := r.DB.Where("id = ?", id).First(bookModel).Error
+	err := r.DB.Where("id = ?", id).First(taskModel).Error
 
 	if err != nil {
 		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo obtener el book por id"})
+			&fiber.Map{"message": "No se pudo obtener el task por id"})
 
 		return err
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvo el book corretamente",
-		"data":    bookModel,
+		"message": "Se obtuvo el task corretamente",
+		"data":    taskModel,
 	})
 
 	return nil
 }
 
-func (r *Repository) GetBooks(context *fiber.Ctx) error {
+func (r *Repository) GetTasks(context *fiber.Ctx) error {
 
-	bookModels := &[]models.Books{}
+	taskModels := &[]models.Task{}
 
-	err := r.DB.Find(bookModels).Error
+	err := r.DB.Find(taskModels).Error
 
 	if err != nil {
 		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudieron obtener los libros"})
+			&fiber.Map{"message": "No se pudieron obtener los tasks"})
 
 		return err
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvieron los libros corretamente",
-		"data":    bookModels,
+		"message": "Se obtuvieron los tasks corretamente",
+		"data":    taskModels,
 	})
 
 	return nil
@@ -131,10 +130,10 @@ func (r *Repository) GetBooks(context *fiber.Ctx) error {
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
-	api.Post("/create_books", r.CreateBook)
-	api.Delete("/delete_book/:id", r.DeleteBook)
-	api.Get("/get_books/:id", r.GetBookById)
-	api.Get("/books", r.GetBooks)
+	api.Post("/create_tasks", r.CreateTask)
+	api.Delete("/delete_task/:id", r.DeleteTask)
+	api.Get("/get_tasks/:id", r.GetTaskById)
+	api.Get("/tasks", r.GetTasks)
 }
 
 func main() {
@@ -159,7 +158,7 @@ func main() {
 		log.Fatal("Error cargando la base de datos")
 	}
 
-	errMigrate := models.MigrateBooks(db)
+	errMigrate := models.MigrateTasks(db)
 
 	if errMigrate != nil {
 		log.Fatal("Error migrando la base de datos")
