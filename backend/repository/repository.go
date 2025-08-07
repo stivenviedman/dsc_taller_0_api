@@ -26,6 +26,14 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 		return err
 	}
 
+	// Validar que el User existe
+	user := models.User{}
+	if err := r.DB.First(&user, task.UserID).Error; err != nil {
+		return context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "Usuario no encontrado"},
+		)
+	}
+
 	errCreate := r.DB.Create(&task).Error
 
 	if errCreate != nil {
@@ -118,10 +126,42 @@ func (r *Repository) GetTasks(context *fiber.Ctx) error {
 	return nil
 }
 
+/*---User functions----*/
+func (r *Repository) CreateUser(context *fiber.Ctx) error {
+
+	user := models.User{}
+
+	err := context.BodyParser(&user)
+
+	if err != nil {
+		context.Status(http.StatusUnprocessableEntity).JSON(
+			&fiber.Map{"message": "request failed"})
+
+		return err
+	}
+
+	errCreate := r.DB.Create(&user).Error
+
+	if errCreate != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "No se pudo crear el user"})
+
+		return err
+	}
+
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{"message": "Se creo el user correctamente"})
+
+	return nil
+}
+
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	api.Post("/create_tasks", r.CreateTask)
+	//Pendiente endpoint de update task
 	api.Delete("/delete_task/:id", r.DeleteTask)
 	api.Get("/get_tasks/:id", r.GetTaskById)
 	api.Get("/tasks", r.GetTasks)
+	api.Post("/create_users", r.CreateUser)
+	//Pendiente endpoint de obtener tasks by user id
 }

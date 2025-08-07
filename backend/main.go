@@ -34,9 +34,10 @@ func main() {
 		log.Fatal("Error cargando la base de datos")
 	}
 
-	errMigrate := models.MigrateTasks(db)
+	errMigrateUsers := models.MigrateUsers(db)
+	errMigrateTasks := models.MigrateTasks(db)
 
-	if errMigrate != nil {
+	if errMigrateTasks != nil || errMigrateUsers != nil {
 		log.Fatal("Error migrando la base de datos")
 	}
 
