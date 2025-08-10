@@ -4,6 +4,8 @@ import (
 	"back-end-todolist/models"
 	"net/http"
 
+	"time"
+
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/gorm"
 )
@@ -25,6 +27,9 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 
 		return err
 	}
+
+	// Asignar la fecha actual
+	task.CreationDate = time.Now()
 
 	// Validar que el User existe
 	user := models.User{}
@@ -126,6 +131,26 @@ func (r *Repository) GetTasks(context *fiber.Ctx) error {
 	return nil
 }
 
+func (r *Repository) GetTasksByUserId(context *fiber.Ctx) error {
+
+	userID := context.Params("userId")
+
+	tasks := &[]models.Task{}
+
+	if err := r.DB.Where("user_id = ?", userID).Find(&tasks).Error; err != nil {
+		return context.Status(http.StatusInternalServerError).JSON(
+			&fiber.Map{"message": "Error obteniendo las tareas"},
+		)
+	}
+
+	context.Status(http.StatusOK).JSON(&fiber.Map{
+		"message": "Se obtuvieron los tasks corretamente del usuario",
+		"data":    tasks,
+	})
+
+	return nil
+}
+
 /*---User functions----*/
 func (r *Repository) CreateUser(context *fiber.Ctx) error {
 
@@ -163,5 +188,5 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Get("/get_tasks/:id", r.GetTaskById)
 	api.Get("/tasks", r.GetTasks)
 	api.Post("/create_users", r.CreateUser)
-	//Pendiente endpoint de obtener tasks by user id
+	api.Get("/tasks/:userId", r.GetTasksByUserId)
 }
