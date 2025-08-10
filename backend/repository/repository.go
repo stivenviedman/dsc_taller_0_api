@@ -39,6 +39,14 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 		)
 	}
 
+	// Validar que la categoria existe
+	category := models.CategoryTemp{}
+	if err := r.DB.First(&category, task.CategoryTempID).Error; err != nil {
+		return context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "Categoria no encontrada"},
+		)
+	}
+
 	errCreate := r.DB.Create(&task).Error
 
 	if errCreate != nil {
@@ -137,9 +145,15 @@ func (r *Repository) GetTasksByUserId(context *fiber.Ctx) error {
 
 	tasks := &[]models.Task{}
 
-	if err := r.DB.Where("user_id = ?", userID).Find(&tasks).Error; err != nil {
+	// Traer tasks + user + category
+	if err := r.DB.
+		Preload("User").
+		Preload("Category").
+		Where("user_id = ?", userID).
+		Find(&tasks).Error; err != nil {
+
 		return context.Status(http.StatusInternalServerError).JSON(
-			&fiber.Map{"message": "Error obteniendo las tareas"},
+			&fiber.Map{"message": "Error al obtener los tasks"},
 		)
 	}
 
@@ -180,6 +194,35 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 	return nil
 }
 
+/*---Category functions----*/
+func (r *Repository) CreateCategory(context *fiber.Ctx) error {
+
+	category := models.CategoryTemp{}
+
+	err := context.BodyParser(&category)
+
+	if err != nil {
+		context.Status(http.StatusUnprocessableEntity).JSON(
+			&fiber.Map{"message": "request failed"})
+
+		return err
+	}
+
+	errCreate := r.DB.Create(&category).Error
+
+	if errCreate != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "No se pudo crear la category"})
+
+		return err
+	}
+
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{"message": "Se creo la category correctamente"})
+
+	return nil
+}
+
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	api.Post("/create_tasks", r.CreateTask)
@@ -189,4 +232,6 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Get("/tasks", r.GetTasks)
 	api.Post("/create_users", r.CreateUser)
 	api.Get("/tasks/:userId", r.GetTasksByUserId)
+	api.Post("/create_categories", r.CreateCategory)
+
 }
