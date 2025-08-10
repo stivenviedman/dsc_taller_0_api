@@ -62,6 +62,58 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 	return nil
 }
 
+func (r *Repository) UpdateTask(context *fiber.Ctx) error {
+
+	task := models.Task{}
+
+	id := context.Params("id")
+
+	if id == "" {
+		context.Status(http.StatusInternalServerError).JSON(
+			&fiber.Map{"message": "El ID no puede estar vacio"})
+
+		return nil
+	}
+
+	err := r.DB.Where("id = ?", id).First(&task).Error
+
+	if err != nil {
+		context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "No se pudo obtener el task por id"})
+
+		return err
+	}
+
+	taskDTO := models.Task{}
+
+	errParser := context.BodyParser(&taskDTO)
+
+	if errParser != nil {
+		context.Status(http.StatusUnprocessableEntity).JSON(
+			&fiber.Map{"message": "request failed"})
+
+		return err
+	}
+
+	task.Description = taskDTO.Description
+	task.State = taskDTO.State
+	task.FinalizationDate = taskDTO.FinalizationDate
+	task.CategoryTempID = taskDTO.CategoryTempID
+	task.UserID = taskDTO.UserID
+
+	// Guardar cambios
+	if err := r.DB.Save(&task).Error; err != nil {
+		return context.Status(http.StatusInternalServerError).JSON(
+			fiber.Map{"message": "No se pudo actualizar el task"},
+		)
+	}
+
+	context.Status(http.StatusOK).JSON(
+		&fiber.Map{"message": "Se actualizo el task correctamente"})
+
+	return nil
+}
+
 func (r *Repository) DeleteTask(context *fiber.Ctx) error {
 
 	taskModel := models.Task{}
@@ -91,7 +143,7 @@ func (r *Repository) DeleteTask(context *fiber.Ctx) error {
 
 func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 
-	taskModel := &models.Task{}
+	task := &models.Task{}
 	id := context.Params("id")
 
 	if id == "" {
@@ -101,18 +153,20 @@ func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 		return nil
 	}
 
-	err := r.DB.Where("id = ?", id).First(taskModel).Error
+	if err := r.DB.
+		Preload("User").
+		Preload("Category").
+		Where("id = ?", id).
+		First(task).Error; err != nil {
 
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo obtener el task por id"})
-
-		return err
+		return context.Status(http.StatusInternalServerError).JSON(
+			&fiber.Map{"message": "Error al obtener el task"},
+		)
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
 		"message": "Se obtuvo el task corretamente",
-		"data":    taskModel,
+		"data":    task,
 	})
 
 	return nil
@@ -120,20 +174,21 @@ func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 
 func (r *Repository) GetTasks(context *fiber.Ctx) error {
 
-	taskModels := &[]models.Task{}
+	tasks := &[]models.Task{}
 
-	err := r.DB.Find(taskModels).Error
+	if err := r.DB.
+		Preload("User").
+		Preload("Category").
+		Find(&tasks).Error; err != nil {
 
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudieron obtener los tasks"})
-
-		return err
+		return context.Status(http.StatusInternalServerError).JSON(
+			&fiber.Map{"message": "Error al obtener los tasks"},
+		)
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
 		"message": "Se obtuvieron los tasks corretamente",
-		"data":    taskModels,
+		"data":    tasks,
 	})
 
 	return nil
@@ -145,7 +200,6 @@ func (r *Repository) GetTasksByUserId(context *fiber.Ctx) error {
 
 	tasks := &[]models.Task{}
 
-	// Traer tasks + user + category
 	if err := r.DB.
 		Preload("User").
 		Preload("Category").
@@ -226,7 +280,7 @@ func (r *Repository) CreateCategory(context *fiber.Ctx) error {
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 	api.Post("/create_tasks", r.CreateTask)
-	//Pendiente endpoint de update task
+	api.Put("/update_task/:id", r.UpdateTask)
 	api.Delete("/delete_task/:id", r.DeleteTask)
 	api.Get("/get_tasks/:id", r.GetTaskById)
 	api.Get("/tasks", r.GetTasks)

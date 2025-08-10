@@ -107,6 +107,36 @@
 					"response": []
 				},
 				{
+					"name": "Update task",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\" :6,\n    \"description\": \"Hacer mercado actualizado\",\n    \"finalizationDate\": \"2027-02-01T00:00:00Z\",\n    \"state\": \"completado\",\n    \"category_id\" : 1,\n    \"user_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/update_task/6",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"update_task",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Get tasks",
 					"request": {
 						"method": "GET",
