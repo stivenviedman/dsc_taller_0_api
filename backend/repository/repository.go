@@ -178,10 +178,7 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	//Pendiente endpoint de obtener tasks by user id
 
 	// Category routes
-	api.Post("/categories", r.CreateCategory)
-	api.Get("/categories", r.GetCategories)
-	api.Get("/categories/:id", r.GetCategoryById)
-	api.Put("/categories/:id", r.UpdateCategory)
-	api.Delete("/categories/:id", r.DeleteCategory)
-	api.Get("/categories/:id/tasks", r.GetTasksByCategory)
+	api.Post("/categorias", r.CreateCategory)
+	api.Get("/categorias", r.GetCategories)
+	api.Delete("/categorias/:id", r.DeleteCategory)
 }

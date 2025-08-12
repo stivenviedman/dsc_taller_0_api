@@ -5,8 +5,9 @@ import (
 )
 
 type Category struct {
-	ID   uint   `gorm:"primaryKey;autoIncrement" json:"id"`
-	Name string `json:"name" gorm:"not null;unique"`
+	ID          uint   `gorm:"primaryKey;autoIncrement" json:"id"`
+	Name        string `json:"name" gorm:"not null;unique"`
+	Description string `json:"description" gorm:"not null"`
 
 	// Relaciones
 	Tasks []Task `json:"tasks,omitempty"`

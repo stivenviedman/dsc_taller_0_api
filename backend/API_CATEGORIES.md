@@ -4,11 +4,12 @@
 
 ### 1. Crear Categoría
 ```
-POST /api/categories
+POST /api/categorias
 Content-Type: application/json
 
 {
-    "name": "Nombre de la categoría"
+    "name": "Nombre de la categoría",
+    "description": "Descripción de la categoría"
 }
 ```
 
@@ -18,14 +19,34 @@ Content-Type: application/json
     "message": "Se creó la categoría correctamente",
     "data": {
         "id": 1,
-        "name": "Nombre de la categoría"
+        "name": "Nombre de la categoría",
+        "description": "Descripción de la categoría"
     }
 }
 ```
 
-### 2. Obtener Todas las Categorías
+**Error (400) - Campos vacíos:**
+```json
+{
+    "message": "El nombre de la categoría no puede estar vacío"
+}
 ```
-GET /api/categories
+```json
+{
+    "message": "La descripción de la categoría no puede estar vacía"
+}
+```
+
+**Error (409) - Nombre duplicado:**
+```json
+{
+    "message": "Ya existe una categoría con ese nombre"
+}
+```
+
+### 2. Obtener Lista de Categorías
+```
+GET /api/categorias
 ```
 
 **Respuesta exitosa (200):**
@@ -35,62 +56,34 @@ GET /api/categories
     "data": [
         {
             "id": 1,
-            "name": "Personal"
+            "name": "Personal",
+            "description": "Tareas personales y de vida diaria"
         },
         {
             "id": 2,
-            "name": "Trabajo"
+            "name": "Trabajo",
+            "description": "Tareas relacionadas con el trabajo y proyectos laborales"
         }
     ]
 }
 ```
 
-### 3. Obtener Categoría por ID
+### 3. Eliminar Categoría
 ```
-GET /api/categories/:id
-```
-
-**Respuesta exitosa (200):**
-```json
-{
-    "message": "Se obtuvo la categoría correctamente",
-    "data": {
-        "id": 1,
-        "name": "Personal"
-    }
-}
-```
-
-### 4. Actualizar Categoría
-```
-PUT /api/categories/:id
-Content-Type: application/json
-
-{
-    "name": "Nuevo nombre de la categoría"
-}
-```
-
-**Respuesta exitosa (200):**
-```json
-{
-    "message": "Se actualizó la categoría correctamente",
-    "data": {
-        "id": 1,
-        "name": "Nuevo nombre de la categoría"
-    }
-}
-```
-
-### 5. Eliminar Categoría
-```
-DELETE /api/categories/:id
+DELETE /api/categorias/{id}
 ```
 
 **Respuesta exitosa (200):**
 ```json
 {
     "message": "Se eliminó la categoría correctamente"
+}
+```
+
+**Error (404) - Categoría no encontrada:**
+```json
+{
+    "message": "Categoría no encontrada"
 }
 ```
 
@@ -101,51 +94,48 @@ DELETE /api/categories/:id
 }
 ```
 
-### 6. Obtener Tareas por Categoría
-```
-GET /api/categories/:id/tasks
-```
-
-**Respuesta exitosa (200):**
-```json
-{
-    "message": "Se obtuvieron las tareas de la categoría correctamente",
-    "data": [
-        {
-            "id": 1,
-            "description": "Descripción de la tarea",
-            "date": "2024-01-15",
-            "user_id": 1,
-            "category_id": 1
-        }
-    ],
-    "category": {
-        "id": 1,
-        "name": "Personal"
-    }
-}
-```
-
 ## Categorías por Defecto
 
 Al iniciar la aplicación, se crean automáticamente las siguientes categorías:
-- Personal
-- Trabajo
-- Estudio
-- Hogar
-- Salud
+- **Personal**: Tareas personales y de vida diaria
+- **Trabajo**: Tareas relacionadas con el trabajo y proyectos laborales
+- **Estudio**: Tareas académicas y de aprendizaje
+- **Hogar**: Tareas domésticas y de mantenimiento del hogar
+- **Salud**: Tareas relacionadas con la salud y bienestar
 
 ## Validaciones
 
 - **Nombre único**: No se pueden crear categorías con nombres duplicados
 - **Nombre obligatorio**: El nombre de la categoría no puede estar vacío
+- **Descripción obligatoria**: La descripción de la categoría no puede estar vacía
 - **Integridad referencial**: No se puede eliminar una categoría que tenga tareas asociadas
-- **Categoría obligatoria**: Toda tarea debe tener una categoría asignada
 
 ## Códigos de Estado HTTP
 
 - **200**: Operación exitosa
-- **400**: Bad Request (datos inválidos)
+- **400**: Bad Request (campos vacíos o datos inválidos)
 - **404**: Categoría no encontrada
 - **409**: Conflicto (nombre duplicado o categoría con tareas)
 - **422**: Unprocessable Entity (error en el parsing del body)
+
+## Ejemplos de Uso
+
+### Crear una nueva categoría:
+```bash
+curl -X POST http://localhost:8080/api/categorias \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Proyectos",
+    "description": "Tareas relacionadas con proyectos personales y profesionales"
+  }'
+```
+
+### Obtener todas las categorías:
+```bash
+curl http://localhost:8080/api/categorias
+```
+
+### Eliminar una categoría:
+```bash
+curl -X DELETE http://localhost:8080/api/categorias/1
+```
