@@ -36,9 +36,15 @@ func main() {
 
 	errMigrateUsers := models.MigrateUsers(db)
 	errMigrateTasks := models.MigrateTasks(db)
+	errMigrateCategories := models.MigrateCategories(db)
 
-	if errMigrateTasks != nil || errMigrateUsers != nil {
+	if errMigrateTasks != nil || errMigrateUsers != nil || errMigrateCategories != nil {
 		log.Fatal("Error migrando la base de datos")
+	}
+
+	// Inicializar categorías por defecto
+	if err := InitDefaultCategories(db); err != nil {
+		log.Printf("Advertencia: Error inicializando categorías por defecto: %v", err)
 	}
 
 	r := repository.Repository{DB: db}

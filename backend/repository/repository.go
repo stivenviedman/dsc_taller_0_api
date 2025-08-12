@@ -34,6 +34,14 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 		)
 	}
 
+	// Validar que la Categoría existe
+	category := models.Category{}
+	if err := r.DB.First(&category, task.CategoryID).Error; err != nil {
+		return context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "Categoría no encontrada"},
+		)
+	}
+
 	errCreate := r.DB.Create(&task).Error
 
 	if errCreate != nil {
@@ -157,11 +165,23 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
+
+	// Task routes
 	api.Post("/create_tasks", r.CreateTask)
 	//Pendiente endpoint de update task
 	api.Delete("/delete_task/:id", r.DeleteTask)
 	api.Get("/get_tasks/:id", r.GetTaskById)
 	api.Get("/tasks", r.GetTasks)
+
+	// User routes
 	api.Post("/create_users", r.CreateUser)
 	//Pendiente endpoint de obtener tasks by user id
+
+	// Category routes
+	api.Post("/categories", r.CreateCategory)
+	api.Get("/categories", r.GetCategories)
+	api.Get("/categories/:id", r.GetCategoryById)
+	api.Put("/categories/:id", r.UpdateCategory)
+	api.Delete("/categories/:id", r.DeleteCategory)
+	api.Get("/categories/:id/tasks", r.GetTasksByCategory)
 }
