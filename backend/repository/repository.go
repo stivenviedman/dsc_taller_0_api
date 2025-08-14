@@ -50,7 +50,7 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Delete("/delete_task/:id", r.DeleteTask)
 	api.Get("/get_tasks/:id", r.GetTaskById)
 	api.Get("/tasks", r.GetTasks)
-	//pendiente endpoint para buscar tasks por categoria y/o por estado
+	api.Get("/tasks/:userId/:categoryId/:state", r.GetTasksByCategoryOrState)
 
 	// User routes
 	api.Post("/create_users", r.CreateUser)

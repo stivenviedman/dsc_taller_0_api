@@ -4,6 +4,7 @@ import (
 	"back-end-todolist/models"
 	"net/http"
 
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -212,4 +213,43 @@ func (r *Repository) GetTasksByUserId(context *fiber.Ctx) error {
 	})
 
 	return nil
+}
+
+func (r *Repository) GetTasksByCategoryOrState(c *fiber.Ctx) error {
+	userID := c.Params("userId")
+
+	categoryParam := c.Params("categoryId")
+	stateParam := c.Params("state")
+
+	tasks := &[]models.Task{}
+
+	query := r.DB.Preload("User").Preload("Category").Where("user_id = ?", userID)
+
+	if categoryParam != "_" && stateParam != "_" {
+
+		categoryID, err := strconv.Atoi(categoryParam)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "categoryId inválido"})
+		}
+		query = query.Where("category_id = ? AND state = ?", categoryID, stateParam)
+	} else if categoryParam != "_" {
+		categoryID, err := strconv.Atoi(categoryParam)
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"message": "categoryId inválido"})
+		}
+		query = query.Where("category_id = ?", categoryID)
+	} else if stateParam != "_" {
+		query = query.Where("state = ?", stateParam)
+	}
+
+	if err := query.Find(&tasks).Error; err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": "Error al obtener los tasks",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "Se obtuvieron los tasks correctamente por filtro",
+		"data":    tasks,
+	})
 }
