@@ -91,12 +91,12 @@ func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 
 	if id == "" {
 		context.Status(http.StatusInternalServerError).JSON(
-			&fiber.Map{"message": "El ID no puede estar vacio"})
+			&fiber.Map{"message": "El ID no puede estar vacío"})
 
 		return nil
 	}
 
-	err := r.DB.Where("id = ?", id).First(taskModel).Error
+	err := r.DB.Joins("User").Joins("Category").Where("tasks.id = ?", id).First(taskModel).Error
 
 	if err != nil {
 		context.Status(http.StatusBadRequest).JSON(
@@ -106,7 +106,7 @@ func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvo el task corretamente",
+		"message": "Se obtuvo el task correctamente",
 		"data":    taskModel,
 	})
 
@@ -117,7 +117,7 @@ func (r *Repository) GetTasks(context *fiber.Ctx) error {
 
 	taskModels := &[]models.Task{}
 
-	err := r.DB.Find(taskModels).Error
+	err := r.DB.Joins("User").Joins("Category").Find(taskModels).Error
 
 	if err != nil {
 		context.Status(http.StatusBadRequest).JSON(
@@ -127,7 +127,7 @@ func (r *Repository) GetTasks(context *fiber.Ctx) error {
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvieron los tasks corretamente",
+		"message": "Se obtuvieron los tasks correctamente",
 		"data":    taskModels,
 	})
 

@@ -2,6 +2,7 @@ package repository
 
 import (
 	"back-end-todolist/models"
+	"log"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
@@ -86,6 +87,13 @@ func (r *Repository) DeleteCategory(context *fiber.Ctx) error {
 		)
 	}
 
+	// Verificar si es la categoría "Sin Categoría" (ID 1) - no permitir eliminarla
+	if id == "1" {
+		return context.Status(http.StatusForbidden).JSON(
+			&fiber.Map{"message": "No se puede eliminar la categoría 'Sin Categoría'"},
+		)
+	}
+
 	// Verificar si hay tareas usando esta categoría
 	var taskCount int64
 	if err := r.DB.Model(&models.Task{}).Where("category_id = ?", id).Count(&taskCount).Error; err != nil {
@@ -94,12 +102,18 @@ func (r *Repository) DeleteCategory(context *fiber.Ctx) error {
 		return err
 	}
 
+	// Si hay tareas, moverlas a la categoría "Sin Categoría" (ID 1)
 	if taskCount > 0 {
-		return context.Status(http.StatusConflict).JSON(
-			&fiber.Map{"message": "No se puede eliminar la categoría porque tiene tareas asociadas"},
-		)
+		// Actualizar todas las tareas de esta categoría para que usen la categoría "Sin Categoría"
+		if err := r.DB.Model(&models.Task{}).Where("category_id = ?", id).Update("category_id", 1).Error; err != nil {
+			context.Status(http.StatusInternalServerError).JSON(
+				&fiber.Map{"message": "Error moviendo tareas a categoría 'Sin Categoría'"})
+			return err
+		}
+		log.Printf("Se movieron %d tareas a la categoría 'Sin Categoría'", taskCount)
 	}
 
+	// Ahora eliminar la categoría
 	err := r.DB.Delete(&categoryModel, id)
 	if err.Error != nil {
 		context.Status(http.StatusBadRequest).JSON(
@@ -107,7 +121,17 @@ func (r *Repository) DeleteCategory(context *fiber.Ctx) error {
 		return err.Error
 	}
 
-	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se eliminó la categoría correctamente"})
+	// Mensaje personalizado según si se movieron tareas o no
+	if taskCount > 0 {
+		context.Status(http.StatusOK).JSON(
+			&fiber.Map{
+				"message":        "Se eliminó la categoría correctamente",
+				"info":           "Se movieron tareas a la categoría 'Sin Categoría'",
+				"tareas_movidas": taskCount,
+			})
+	} else {
+		context.Status(http.StatusOK).JSON(
+			&fiber.Map{"message": "Se eliminó la categoría correctamente"})
+	}
 	return nil
 }

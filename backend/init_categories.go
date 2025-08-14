@@ -10,11 +10,11 @@ import (
 // InitDefaultCategories crea categorías por defecto si no existen
 func InitDefaultCategories(db *gorm.DB) error {
 	defaultCategories := []models.Category{
+		{Name: "Sin Categoría", Description: "Tareas sin categoría"},
 		{Name: "Personal", Description: "Tareas personales y de vida diaria"},
 		{Name: "Trabajo", Description: "Tareas relacionadas con el trabajo y proyectos laborales"},
 		{Name: "Estudio", Description: "Tareas académicas y de aprendizaje"},
 		{Name: "Hogar", Description: "Tareas domésticas y de mantenimiento del hogar"},
-		{Name: "Salud", Description: "Tareas relacionadas con la salud y bienestar"},
 	}
 
 	for _, category := range defaultCategories {
