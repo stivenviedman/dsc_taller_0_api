@@ -35,8 +35,8 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 	}
 
 	// Validar que la categoria existe
-	category := models.CategoryTemp{}
-	if err := r.DB.First(&category, task.CategoryTempID).Error; err != nil {
+	category := models.Category{}
+	if err := r.DB.First(&category, task.CategoryID).Error; err != nil {
 		return context.Status(http.StatusBadRequest).JSON(
 			&fiber.Map{"message": "Categoria no encontrada"},
 		)
@@ -93,7 +93,7 @@ func (r *Repository) UpdateTask(context *fiber.Ctx) error {
 	task.Description = taskDTO.Description
 	task.State = taskDTO.State
 	task.FinalizationDate = taskDTO.FinalizationDate
-	task.CategoryTempID = taskDTO.CategoryTempID
+	task.CategoryID = taskDTO.CategoryID
 	task.UserID = taskDTO.UserID
 
 	// Guardar cambios

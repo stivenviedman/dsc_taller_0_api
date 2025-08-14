@@ -37,7 +37,6 @@ func main() {
 	errMigrateUsers := models.MigrateUsers(db)
 	errMigrateCategories := models.MigrateCategories(db)
 	errMigrateTasks := models.MigrateTasks(db)
-	errMigrateCategories := models.MigrateCategories(db)
 
 	if errMigrateTasks != nil || errMigrateUsers != nil || errMigrateCategories != nil {
 		log.Fatal("Error migrando la base de datos")

@@ -12,128 +12,6 @@ type Repository struct {
 	DB *gorm.DB
 }
 
-/*---Task functions----*/
-func (r *Repository) CreateTask(context *fiber.Ctx) error {
-
-	task := models.Task{}
-
-	err := context.BodyParser(&task)
-
-	if err != nil {
-		context.Status(http.StatusUnprocessableEntity).JSON(
-			&fiber.Map{"message": "request failed"})
-
-		return err
-	}
-
-	// Validar que el User existe
-	user := models.User{}
-	if err := r.DB.First(&user, task.UserID).Error; err != nil {
-		return context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "Usuario no encontrado"},
-		)
-	}
-
-	// Validar que la Categoría existe
-	category := models.Category{}
-	if err := r.DB.First(&category, task.CategoryID).Error; err != nil {
-		return context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "Categoría no encontrada"},
-		)
-	}
-
-	errCreate := r.DB.Create(&task).Error
-
-	if errCreate != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo crear el task"})
-
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se creo el task correctamente"})
-
-	return nil
-}
-
-func (r *Repository) DeleteTask(context *fiber.Ctx) error {
-
-	taskModel := models.Task{}
-	id := context.Params("id")
-
-	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(
-			&fiber.Map{"message": "El ID no puede estar vacio"})
-
-		return nil
-	}
-
-	err := r.DB.Delete(taskModel, id)
-
-	if err.Error != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo eliminar el task"})
-
-		return err.Error
-	}
-
-	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se elimino el task corretamente"})
-
-	return nil
-}
-
-func (r *Repository) GetTaskById(context *fiber.Ctx) error {
-
-	taskModel := &models.Task{}
-	id := context.Params("id")
-
-	if id == "" {
-		context.Status(http.StatusInternalServerError).JSON(
-			&fiber.Map{"message": "El ID no puede estar vacío"})
-
-		return nil
-	}
-
-	err := r.DB.Joins("User").Joins("Category").Where("tasks.id = ?", id).First(taskModel).Error
-
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo obtener el task por id"})
-
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvo el task correctamente",
-		"data":    taskModel,
-	})
-
-	return nil
-}
-
-func (r *Repository) GetTasks(context *fiber.Ctx) error {
-
-	taskModels := &[]models.Task{}
-
-	err := r.DB.Joins("User").Joins("Category").Find(taskModels).Error
-
-	if err != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudieron obtener los tasks"})
-
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvieron los tasks correctamente",
-		"data":    taskModels,
-	})
-
-	return nil
-}
-
 /*---User functions----*/
 func (r *Repository) CreateUser(context *fiber.Ctx) error {
 
@@ -163,35 +41,6 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 	return nil
 }
 
-/*---Category functions----*/
-func (r *Repository) CreateCategory(context *fiber.Ctx) error {
-
-	category := models.CategoryTemp{}
-
-	err := context.BodyParser(&category)
-
-	if err != nil {
-		context.Status(http.StatusUnprocessableEntity).JSON(
-			&fiber.Map{"message": "request failed"})
-
-		return err
-	}
-
-	errCreate := r.DB.Create(&category).Error
-
-	if errCreate != nil {
-		context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se pudo crear la category"})
-
-		return err
-	}
-
-	context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se creo la category correctamente"})
-
-	return nil
-}
-
 func (r *Repository) SetupRoutes(app *fiber.App) {
 	api := app.Group("/api")
 
@@ -201,20 +50,14 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Delete("/delete_task/:id", r.DeleteTask)
 	api.Get("/get_tasks/:id", r.GetTaskById)
 	api.Get("/tasks", r.GetTasks)
+	//pendiente endpoint para buscar tasks por categoria y/o por estado
 
 	// User routes
 	api.Post("/create_users", r.CreateUser)
-<<<<<<< HEAD
 	api.Get("/tasks/:userId", r.GetTasksByUserId)
-	api.Post("/create_categories", r.CreateCategory)
-	//pendiente endpoint para buscar tasks por categoria y/o por estado
-
-=======
-	//Pendiente endpoint de obtener tasks by user id
 
 	// Category routes
 	api.Post("/categorias", r.CreateCategory)
 	api.Get("/categorias", r.GetCategories)
 	api.Delete("/categorias/:id", r.DeleteCategory)
->>>>>>> andresChaparro_develop
 }
