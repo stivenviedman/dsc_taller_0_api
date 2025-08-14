@@ -204,7 +204,8 @@ func (r *Repository) LoginUser(context *fiber.Ctx) error {
 
 	return context.Status(http.StatusOK).JSON(
 		&fiber.Map{"message": "Ingreso exitoso",
-			"token": token})
+			"token": token,
+			"image": dbuser.ImageP})
 }
 
 func (r *Repository) SetupRoutes(app *fiber.App) {
