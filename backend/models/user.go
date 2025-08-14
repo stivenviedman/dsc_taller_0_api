@@ -9,7 +9,7 @@ type User struct {
 	Username *string `json:"username"`
 	Password *string `json:"password"`
 	ImageP   *string `json:"image"`
-	Tasks    []Task  `json:"tasks"`
+	Tasks    []Task  `json:"-"`
 }
 
 func MigrateUsers(db *gorm.DB) error {
