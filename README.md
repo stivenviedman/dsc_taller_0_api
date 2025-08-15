@@ -12,10 +12,10 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 ## Endpoints
 
 ### 1. Obtener todos los tasks por UserId
-- **URL:** `/tasks/{UserId}`
+- **URL:** `/tasks/{userId}`
 - **Método:** `GET`
 - **Descripción:** Obtiene todas las tareas dado el id de un usuario, incluyendo información de usuario y categoría asociada.
-- **Respuesta exitosa:**
+- **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
     "data": [
@@ -62,10 +62,10 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 }
 ```
 ### 2. Obtener task por id
-- **URL:** `/get_tasks/{TaskId}`
+- **URL:** `/get_tasks/{taskId}`
 - **Método:** `GET`
 - **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
-- **Respuesta exitosa:**
+- **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
     "data": {
@@ -92,7 +92,7 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 ```
 ### 3. Crear task
 - **URL:** `/create_tasks`
-- **Método:** `GET`
+- **Método:** `POST`
 - **Cuerpo de la solicitud (JSON):**
 ```json
 {
@@ -104,10 +104,31 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 }
 ```
 - **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
-- **Respuesta exitosa:**
+- **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
     "message": "Se creo el task correctamente"
+}
+```
+### 4. Update task
+- **URL:** `/update_task/{taskId}`
+- **Método:** `PUT`
+- **Cuerpo de la solicitud (JSON):**
+```json
+{
+    "id":2,
+    "description": "Sacar al perro pero al parque grande",
+    "finalizationDate": "2027-04-01T00:00:00Z",
+    "state": "Completado",
+    "category_id" : 1,
+    "user_id": 1
+}
+```
+- **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Se actualizo el task correctamente"
 }
 ```
 
