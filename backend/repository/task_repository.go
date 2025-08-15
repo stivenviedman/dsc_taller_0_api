@@ -101,7 +101,10 @@ func (r *Repository) UpdateTask(context *fiber.Ctx) error {
 	task.State = taskDTO.State
 	task.FinalizationDate = taskDTO.FinalizationDate
 	task.CategoryID = taskDTO.CategoryID
-	task.UserID = taskDTO.UserID
+
+	/*Obtiene el userId a partir del token*/
+	userID := context.Locals("userID").(uint)
+	task.UserID = userID
 
 	// Guardar cambios
 	if err := r.DB.Save(&task).Error; err != nil {
