@@ -11,10 +11,10 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 
 ## Endpoints
 
-### 1. Obtener todos los tasks
-- **URL:** `/tasks`
+### 1. Obtener todos los tasks por UserId
+- **URL:** `/tasks/{UserId}`
 - **Método:** `GET`
-- **Descripción:** Obtiene todas las tareas, incluyendo información de usuario y categoría asociada.
+- **Descripción:** Obtiene todas las tareas dado el id de un usuario, incluyendo información de usuario y categoría asociada.
 - **Respuesta exitosa:**
 ```json
 {
