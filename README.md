@@ -18,16 +18,26 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 - **Respuesta exitosa:**
 ```json
 {
-  "message": "Se obtuvieron los tasks corretamente",
-  "data": [
-    {
-      "ID": 1,
-      "Description": "Tarea ejemplo",
-      "State": "pendiente",
-      "CreationDate": "2025-08-14T12:00:00Z",
-      "FinalizationDate": null,
-      "User": { "ID": 1, "Name": "Juan" },
-      "Category": { "ID": 2, "Name": "Trabajo" }
-    }
-  ]
+    "data": [
+        {
+            "id": 1,
+            "description": "Hacer mercado",
+            "creationDate": "2025-08-14T00:00:00Z",
+            "finalizationDate": "2027-02-01T00:00:00Z",
+            "state": "Sin Empezar",
+            "user_id": 1,
+            "User": {
+                "id": 1,
+                "username": "gabo98",
+                "password": "1234"
+            },
+            "category_id": 1,
+            "Category": {
+                "id": 1,
+                "name": "Sin Categoría",
+                "description": "Tareas sin categoría"
+            }
+        }
+    ],
+    "message": "Se obtuvieron los tasks corretamente del usuario"
 }
