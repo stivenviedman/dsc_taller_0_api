@@ -28,8 +28,11 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 	task.CreationDate = time.Now()
 
 	// Validar que el User existe
+	/*Obtiene el userId a partir del token*/
+	userID := context.Locals("userID").(uint)
+
 	user := models.User{}
-	if err := r.DB.First(&user, task.UserID).Error; err != nil {
+	if err := r.DB.First(&user, userID).Error; err != nil {
 		return context.Status(http.StatusBadRequest).JSON(
 			&fiber.Map{"message": "Usuario no encontrado"},
 		)
