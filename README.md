@@ -64,7 +64,7 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 ### 2. Obtener task por id
 - **URL:** `/get_tasks/{taskId}`
 - **Método:** `GET`
-- **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
+- **Descripción:** Obtiene una tarea dado el id, incluyendo información de usuario y categoría asociada.
 - **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
@@ -103,7 +103,7 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "user_id": 1
 }
 ```
-- **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
+- **Descripción:** Crea una tarea, asociandola a un usuario y a una categoria.
 - **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
@@ -124,14 +124,23 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "user_id": 1
 }
 ```
-- **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
+- **Descripción:** Actualiza una tarea existente, dado el id de la tarea y el cuerpo json con los datos nuevos.
 - **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
     "message": "Se actualizo el task correctamente"
 }
 ```
-
+### 5. Delete task
+- **URL:** `/delete_task/{taskId}`
+- **Método:** `DELETE`
+- **Descripción:** Elimina una tarea dado su id.
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Se elimino el task corretamente"
+}
+```
 
 
 
