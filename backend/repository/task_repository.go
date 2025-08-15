@@ -13,6 +13,9 @@ import (
 /*---Task functions----*/
 func (r *Repository) CreateTask(context *fiber.Ctx) error {
 
+	/*Obtiene el userId a partir del token*/
+	userID := context.Locals("userID").(uint)
+
 	task := models.Task{}
 
 	err := context.BodyParser(&task)
@@ -24,12 +27,12 @@ func (r *Repository) CreateTask(context *fiber.Ctx) error {
 		return err
 	}
 
+	//Asigna el id
+	task.UserID = userID
 	// Asignar la fecha actual
 	task.CreationDate = time.Now()
 
 	// Validar que el User existe
-	/*Obtiene el userId a partir del token*/
-	userID := context.Locals("userID").(uint)
 
 	user := models.User{}
 	if err := r.DB.First(&user, userID).Error; err != nil {
