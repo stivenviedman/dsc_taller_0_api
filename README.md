@@ -1,7 +1,10 @@
 # dsc_taller_0_api
 Taller de nivelacion del curso Desarrollo de Soluciones Cloud
 
-# API de Tareas (Tasks)
+# Steps running project
+- En la carpeta backend, ejecutar el comando: docker compose up --build 🚀
+
+# API Endpoints Documentation
 
 Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. Está desarrollada con **Go** y **Fiber**.
 
