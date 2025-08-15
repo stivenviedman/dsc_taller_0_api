@@ -71,6 +71,26 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "message": "Se obtuvo el task corretamente"
 }
 ```
+### 3. Crear task
+- **URL:** `/create_tasks`
+- **Método:** `GET`
+- **Cuerpo de la solicitud (JSON):**
+```json
+{
+    "description": "Sacar al perro",
+    "finalizationDate": "2027-02-01T00:00:00Z",
+    "state": "Sin Empezar",
+    "category_id" : 3,
+    "user_id": 1
+}
+```
+- **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
+- **Respuesta exitosa:**
+```json
+{
+    "message": "Se creo el task correctamente"
+}
+```
 
 
 
