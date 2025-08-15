@@ -42,9 +42,36 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "message": "Se obtuvieron los tasks corretamente del usuario"
 }
 ```
-### 1. Obtener todos los tasks por UserId
-- **URL:** `/tasks/{UserId}`
+### 2. Obtener task por id
+- **URL:** `/get_tasks/{TaskId}`
 - **Método:** `GET`
-- **Descripción:** Obtiene todas las tareas dado el id de un usuario, incluyendo información de usuario y categoría asociada.
+- **Descripción:** Obtiene todas las tareas dado el id de una tarea, incluyendo información de usuario y categoría asociada.
 - **Respuesta exitosa:**
+```json
+{
+    "data": {
+        "id": 1,
+        "description": "Hacer mercado",
+        "creationDate": "2025-08-14T00:00:00Z",
+        "finalizationDate": "2027-02-01T00:00:00Z",
+        "state": "pendiente",
+        "user_id": 1,
+        "User": {
+            "id": 1,
+            "username": "gabo98",
+            "password": "1234"
+        },
+        "category_id": 1,
+        "Category": {
+            "id": 1,
+            "name": "Sin Categoría",
+            "description": "Tareas sin categoría"
+        }
+    },
+    "message": "Se obtuvo el task corretamente"
+}
+```
+
+
+
 
