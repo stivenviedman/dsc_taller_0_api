@@ -41,13 +41,20 @@ func AutValidation(c *fiber.Ctx) error {
 			"error": "Token inválido",
 		})
 	}
+
+	claims := Token.Claims.(jwt.MapClaims)
+	userID := uint(claims["userId"].(float64))
+
+	c.Locals("userID", userID)
+
 	return c.Next()
 }
 
-func GenerarToken(username string) (string, error) {
+func GenerarToken(username string, id uint) (string, error) {
 
 	datos := jwt.MapClaims{
 		"username": username,
+		"userId":   id,
 		"exp":      time.Now().Add(time.Minute * 15).Unix(),
 		"iat":      time.Now().Unix(),
 	}

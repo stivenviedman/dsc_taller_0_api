@@ -191,7 +191,7 @@ func (r *Repository) GetTasks(context *fiber.Ctx) error {
 
 func (r *Repository) GetTasksByUserId(context *fiber.Ctx) error {
 
-	userID := context.Params("userId")
+	userID := context.Locals("userID").(uint)
 
 	tasks := &[]models.Task{}
 
