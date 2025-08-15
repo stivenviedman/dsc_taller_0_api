@@ -1,8 +1,8 @@
 # dsc_taller_0_api
 Taller de nivelacion del curso Desarrollo de Soluciones Cloud
 
-# Steps running project
-- En la carpeta backend, ejecutar el comando: docker compose up --build 🚀
+# Steps running project 🚀
+- En la carpeta backend, ejecutar el comando: docker compose up --build
 
 # API Endpoints Documentation
 
