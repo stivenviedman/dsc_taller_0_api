@@ -2,7 +2,7 @@
 Taller de nivelacion del curso Desarrollo de Soluciones Cloud
 
 # Steps running project 🚀
-- En la carpeta backend, ejecutar el comando: docker compose up --build
+- En la carpeta raiz, ejecutar el comando: docker compose up --build
 
 # API Endpoints Documentation
 
