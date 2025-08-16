@@ -9,8 +9,8 @@ import (
 	"back-end-todolist/repository"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/joho/godotenv"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -41,11 +41,6 @@ func main() {
 
 	if errMigrateTasks != nil || errMigrateUsers != nil || errMigrateCategories != nil {
 		log.Fatal("Error migrando la base de datos")
-	}
-
-	// Inicializar categorías por defecto
-	if err := InitDefaultCategories(db); err != nil {
-		log.Printf("Advertencia: Error inicializando categorías por defecto: %v", err)
 	}
 
 	r := repository.Repository{DB: db}
