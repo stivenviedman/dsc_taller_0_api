@@ -55,18 +55,15 @@ export function AuthPage() {
       const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // mode: "cors", // default in browsers, but harmless to be explicit
         body: JSON.stringify(payload),
       });
 
-      // Try to parse JSON if present; otherwise read text so we see backend errors
       const contentType = res.headers.get("content-type") || "";
       const data = contentType.includes("application/json")
         ? await res.json()
         : { message: await res.text() };
 
       if (!res.ok) {
-        // Show backend error message if available
         const msg =
           typeof data?.message === "string"
             ? data.message
@@ -74,19 +71,13 @@ export function AuthPage() {
         throw new Error(msg);
       }
 
-      if (formType === "login") {
-        const token = data?.token;
-        if (!token) throw new Error("Login succeeded but no token returned.");
-        localStorage.setItem("jwt", token);
-        setToken(token);
-        setView("tareas");
-      }
-
-      alert(data?.message || `${formType} success`);
+      const token = data?.token;
+      if (!token) throw new Error("Success but no token returned.");
+      localStorage.setItem("jwt", token);
+      setToken(token);
+      setView("tareas");
     } catch (err: any) {
-      // CORS / network errors are typically TypeError: Failed to fetch
       console.log("Auth error:", err);
-      alert(`${formType} failed: ${err?.message || "Network or CORS error"}`);
     }
   };
 
