@@ -10,6 +10,9 @@ import (
 
 /*---Category functions----*/
 func (r *Repository) CreateCategory(context *fiber.Ctx) error {
+
+	userID := context.Locals("userID").(uint)
+
 	category := models.Category{}
 
 	err := context.BodyParser(&category)
@@ -41,6 +44,9 @@ func (r *Repository) CreateCategory(context *fiber.Ctx) error {
 		)
 	}
 
+	/*Le asigna el userID*/
+	category.UserID = userID
+
 	errCreate := r.DB.Create(&category).Error
 	if errCreate != nil {
 		context.Status(http.StatusBadRequest).JSON(
@@ -54,9 +60,12 @@ func (r *Repository) CreateCategory(context *fiber.Ctx) error {
 }
 
 func (r *Repository) GetCategories(context *fiber.Ctx) error {
+
+	userID := context.Locals("userID").(uint)
+
 	categoryModels := &[]models.Category{}
 
-	err := r.DB.Find(categoryModels).Error
+	err := r.DB.Where("user_id", userID).Find(categoryModels).Error
 	if err != nil {
 		context.Status(http.StatusBadRequest).JSON(
 			&fiber.Map{"message": "No se pudieron obtener las categorías"})
@@ -64,7 +73,7 @@ func (r *Repository) GetCategories(context *fiber.Ctx) error {
 	}
 
 	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvieron las categorías correctamente",
+		"message": "Se obtuvieron las categorías del usuario correctamente",
 		"data":    categoryModels,
 	})
 	return nil

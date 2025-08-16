@@ -11,6 +11,9 @@ type Category struct {
 
 	// Relaciones
 	Tasks []Task `json:"tasks,omitempty"`
+	// Relaciones
+	UserID uint `json:"user_id"` // Clave foránea explícita
+	User   User `gorm:"foreignKey:UserID"`
 }
 
 func MigrateCategories(db *gorm.DB) error {
