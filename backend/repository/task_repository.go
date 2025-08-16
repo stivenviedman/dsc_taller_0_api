@@ -177,28 +177,6 @@ func (r *Repository) GetTaskById(context *fiber.Ctx) error {
 	return nil
 }
 
-func (r *Repository) GetTasks(context *fiber.Ctx) error {
-
-	tasks := &[]models.Task{}
-
-	if err := r.DB.
-		Preload("User").
-		Preload("Category").
-		Find(&tasks).Error; err != nil {
-
-		return context.Status(http.StatusInternalServerError).JSON(
-			&fiber.Map{"message": "Error al obtener los tasks"},
-		)
-	}
-
-	context.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "Se obtuvieron los tasks corretamente",
-		"data":    tasks,
-	})
-
-	return nil
-}
-
 func (r *Repository) GetTasksByUserId(context *fiber.Ctx) error {
 
 	userID := context.Locals("userID").(uint)

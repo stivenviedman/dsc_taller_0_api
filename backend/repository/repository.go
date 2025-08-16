@@ -112,13 +112,10 @@ func (r *Repository) SetupRoutes(app *fiber.App) {
 	api.Put("/update_task/:id", middlewares.AutValidation, r.UpdateTask)
 	api.Delete("/delete_task/:id", middlewares.AutValidation, r.DeleteTask)
 	api.Get("/get_tasks/:id", middlewares.AutValidation, r.GetTaskById)
-	api.Get("/tasks", middlewares.AutValidation, r.GetTasks)
-	api.Get("/tasks/:categoryId/:state", middlewares.AutValidation, r.GetTasksByCategoryOrState)
 
 	// User routes
 	api.Post("/create_users", r.CreateUser)
 	api.Post("/login_users", r.LoginUser)
-	//Pendiente endpoint de obtener tasks by user id
 	api.Get("/user_tasks", middlewares.AutValidation, r.GetTasksByUserId)
 
 	// Category routes
