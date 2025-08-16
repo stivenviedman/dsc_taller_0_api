@@ -28,6 +28,19 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 		return err
 	}
 
+	dbuserNames := []models.User{}
+	query := r.DB.Where("username = ?", user.Username).Find(&dbuserNames)
+
+	if query.Error != nil {
+		return context.Status(http.StatusBadRequest).JSON(
+			&fiber.Map{"message": "No se puede validar"})
+	}
+
+	if query.RowsAffected != 0 {
+		return context.Status(http.StatusConflict).JSON(
+			&fiber.Map{"message": "Ya existen perfiles con ese nombre de usuario"})
+	}
+
 	errCreate := r.DB.Create(&user).Error
 
 	if errCreate != nil {
