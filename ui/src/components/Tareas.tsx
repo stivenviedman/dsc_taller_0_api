@@ -41,7 +41,7 @@ export function Tareas() {
   const loadTasks = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/tasks", {
+      const res = await fetch("http://127.0.0.1:8080/api/user_tasks", {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (!res.ok) throw new Error("Error loading tasks");
