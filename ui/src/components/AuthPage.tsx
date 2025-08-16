@@ -19,6 +19,9 @@ export function AuthPage() {
   const [token, setToken] = useState<string | null>(null);
   const [view, setView] = useState<"tareas" | "categorias">("tareas");
 
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [signupError, setSignupError] = useState<string | null>(null);
+
   useEffect(() => {
     const storedToken = localStorage.getItem("jwt");
     if (storedToken) {
@@ -44,6 +47,9 @@ export function AuthPage() {
   ) => {
     e.preventDefault();
 
+    if (formType === "login") setLoginError(null);
+    else setSignupError(null);
+
     const url =
       formType === "login"
         ? "http://127.0.0.1:8080/api/login_users"
@@ -64,11 +70,10 @@ export function AuthPage() {
         : { message: await res.text() };
 
       if (!res.ok) {
-        const msg =
-          typeof data?.message === "string"
-            ? data.message
-            : `HTTP ${res.status}`;
-        throw new Error(msg);
+        const msg = data?.message || `HTTP ${res.status}`;
+        if (formType === "login") setLoginError(msg);
+        else setSignupError(msg);
+        return;
       }
 
       const token = data?.token;
@@ -77,7 +82,9 @@ export function AuthPage() {
       setToken(token);
       setView("tareas");
     } catch (err: any) {
-      console.log("Auth error:", err);
+      if (formType === "login")
+        setLoginError("Error de conexión con el servidor.");
+      else setSignupError("Error de conexión con el servidor.");
     }
   };
 
@@ -95,7 +102,6 @@ export function AuthPage() {
     return <Todo handleLogout={handleLogout} />;
   }
 
-  // Login / Signup form
   return (
     <div className="flex gap-20 h-screen bg-white">
       {/* Login Section */}
@@ -105,6 +111,11 @@ export function AuthPage() {
           className="w-full max-w-sm space-y-4 p-6 bg-white shadow-md rounded-lg"
         >
           <h2 className="text-2xl font-semibold text-center">Login</h2>
+          {loginError && (
+            <p className="text-red-600 text-center text-sm font-medium">
+              {loginError}
+            </p>
+          )}
           <input
             name="username"
             placeholder="Username"
@@ -135,6 +146,11 @@ export function AuthPage() {
           className="w-full max-w-sm space-y-4 p-6 bg-white shadow-md rounded-lg"
         >
           <h2 className="text-2xl font-semibold text-center">Sign Up</h2>
+          {signupError && (
+            <p className="text-red-600 text-center text-sm font-medium">
+              {signupError}
+            </p>
+          )}
           <input
             name="username"
             placeholder="Username"
