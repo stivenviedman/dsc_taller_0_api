@@ -21,9 +21,9 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 ## Endpoints
 
 ### 1. Obtener todos los tasks por UserId
-- **URL:** `/tasks/{userId}`
+- **URL:** `/user_tasks/`
 - **Método:** `GET`
-- **Descripción:** Obtiene todas las tareas dado el id de un usuario, incluyendo información de usuario y categoría asociada.
+- **Descripción:** Obtiene todas las tareas dado el id de un usuario (el userId se obtiene por medio del JWT Token), incluyendo información de usuario y categoría asociada.
 - **Respuesta exitosa STATUS 200 OK:**
 ```json
 {
@@ -108,8 +108,7 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "description": "Sacar al perro",
     "finalizationDate": "2027-02-01T00:00:00Z",
     "state": "Sin Empezar",
-    "category_id" : 3,
-    "user_id": 1
+    "category_id" : 3
 }
 ```
 - **Descripción:** Crea una tarea, asociandola a un usuario y a una categoria.
@@ -129,8 +128,7 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "description": "Sacar al perro pero al parque grande",
     "finalizationDate": "2027-04-01T00:00:00Z",
     "state": "Completado",
-    "category_id" : 1,
-    "user_id": 1
+    "category_id" : 1
 }
 ```
 - **Descripción:** Actualiza una tarea existente, dado el id de la tarea y el cuerpo json con los datos nuevos.
