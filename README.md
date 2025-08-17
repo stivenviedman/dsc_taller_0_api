@@ -148,36 +148,5 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
     "message": "Se elimino el task corretamente"
 }
 ```
-### 6. Obtener tasks de un usuario por categoria o estado
-- **URL:** `/tasks/{userId}/{cateogryId}/{state}`
-- **Método:** `GET`
-- **Descripción:** Obtiene una lista de tareas de un usuario, en donde se puede enviar: categoria, estado, ambas o ninguna.
-- **Respuesta exitosa STATUS 200 OK:**
-```json
-{
-    "data": [
-        {
-            "id": 1,
-            "description": "Sacar al perro pero al parque grande",
-            "creationDate": "2025-08-14T00:00:00Z",
-            "finalizationDate": "2027-04-01T00:00:00Z",
-            "state": "Completado",
-            "user_id": 1,
-            "User": {
-                "id": 1,
-                "username": "gabo98",
-                "password": "1234"
-            },
-            "category_id": 5,
-            "Category": {
-                "id": 5,
-                "name": "Hogar",
-                "description": "Tareas domésticas y de mantenimiento del hogar"
-            }
-        }
-    ],
-    "message": "Se obtuvieron los tasks correctamente por filtro"
-}
-```
 
 
