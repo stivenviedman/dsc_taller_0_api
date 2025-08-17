@@ -4,7 +4,7 @@ Taller de nivelacion del curso Desarrollo de Soluciones Cloud
 Este repositorio include todo el codigo de la app full-stack Todo. El backend desarrollado en Go se encuentra en la carpeta `backend` y el frontend
 desarrollado en Next.js se encuentra en la carpeta `./ui`
 
-# Steps running project 🚀
+# Steps to run project 🚀
 - En la carpeta raiz, ejecutar el comando: `docker compose up --build`, este es el unico comando necesario para ejecutar el proyecto, incluye
 los contenedores para la base de datos PostgreSQL, el backend y la interfaz grafica.
 
