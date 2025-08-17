@@ -10,6 +10,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 interface Categoria {
   id: number;
@@ -17,7 +18,7 @@ interface Categoria {
   description: string;
 }
 
-export function Categorias() {
+export function Categorias({ onInvalidToken }: { onInvalidToken: () => void }) {
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
@@ -36,14 +37,14 @@ export function Categorias() {
   const loadCategorias = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/categorias", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (!res.ok) throw new Error("Error fetching categories");
+      const res = await fetchWithAuth(
+        "http://127.0.0.1:8080/api/categorias",
+        { headers: { Authorization: `Bearer ${token}` } },
+        onInvalidToken
+      );
+      if (!res) return;
       const data = await res.json();
-      setCategorias(data.data);
+      setCategorias(data.data || []);
     } catch (err) {
       console.error(err);
     }
@@ -56,25 +57,24 @@ export function Categorias() {
 
   const handleAddCategoria = async () => {
     if (!newCategoria.name.trim() || !token) return;
-
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/categorias", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetchWithAuth(
+        "http://127.0.0.1:8080/api/categorias",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            name: newCategoria.name,
+            description: newCategoria.description,
+          }),
         },
-        body: JSON.stringify({
-          name: newCategoria.name,
-          description: newCategoria.description,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Error creating category");
-
-      // Instead of appending manually, reload from backend
+        onInvalidToken
+      );
+      if (!res) return;
       await loadCategorias();
-
       setNewCategoria({ id: 0, name: "", description: "" });
       setOpenAdd(false);
     } catch (err) {
@@ -84,20 +84,16 @@ export function Categorias() {
 
   const handleDeleteCategoria = async () => {
     if (!categoriaToDelete || !token) return;
-
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `http://127.0.0.1:8080/api/categorias/${categoriaToDelete.id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+          headers: { Authorization: `Bearer ${token}` },
+        },
+        onInvalidToken
       );
-
-      if (!res.ok) throw new Error("Error deleting category");
-
+      if (!res) return;
       setCategorias((prev) =>
         prev.filter((c) => c.id !== categoriaToDelete.id)
       );
@@ -107,8 +103,6 @@ export function Categorias() {
       console.error(err);
     }
   };
-
-  console.log(categorias);
 
   return (
     <div className="max-w-3xl mx-auto p-8 bg-white rounded-xl shadow-lg space-y-8">

@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 interface Categoria {
   id: number;
@@ -25,7 +26,7 @@ interface Task {
   Category?: Categoria;
 }
 
-export function Tareas() {
+export function Tareas({ onInvalidToken }: { onInvalidToken: () => void }) {
   const [tareas, setTareas] = useState<Task[]>([]);
   const [categorias, setCategorias] = useState<Categoria[]>([]);
   const [editingTask, setEditingTask] = useState<Task | null>(null);
@@ -41,10 +42,12 @@ export function Tareas() {
   const loadTasks = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/user_tasks", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Error loading tasks");
+      const res = await fetchWithAuth(
+        "http://127.0.0.1:8080/api/user_tasks",
+        { headers: { Authorization: `Bearer ${token}` } },
+        onInvalidToken
+      );
+      if (!res) return;
       const data = await res.json();
       setTareas(data.data || []);
     } catch (err) {
@@ -55,10 +58,12 @@ export function Tareas() {
   const loadCategorias = async () => {
     if (!token) return;
     try {
-      const res = await fetch("http://127.0.0.1:8080/api/categorias", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!res.ok) throw new Error("Error loading categories");
+      const res = await fetchWithAuth(
+        "http://127.0.0.1:8080/api/categorias",
+        { headers: { Authorization: `Bearer ${token}` } },
+        onInvalidToken
+      );
+      if (!res) return;
       const data = await res.json();
       setCategorias(data.data || []);
     } catch (err) {
@@ -79,19 +84,26 @@ export function Tareas() {
   const handleAddTask = async () => {
     if (!addingTask || !token) return;
     try {
-      await fetch("http://127.0.0.1:8080/api/create_tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetchWithAuth(
+        "http://127.0.0.1:8080/api/create_tasks",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            description: addingTask.description,
+            finalizationDate: new Date(
+              addingTask.finalizationDate
+            ).toISOString(),
+            state: addingTask.state,
+            category_id: addingTask.category_id,
+          }),
         },
-        body: JSON.stringify({
-          description: addingTask.description,
-          finalizationDate: new Date(addingTask.finalizationDate).toISOString(),
-          state: addingTask.state,
-          category_id: addingTask.category_id,
-        }),
-      });
+        onInvalidToken
+      );
+      if (!res) return;
       setAddingTask(null);
       loadTasks();
     } catch (err) {
@@ -102,21 +114,26 @@ export function Tareas() {
   const handleSaveEdit = async () => {
     if (!editingTask || !token) return;
     try {
-      await fetch(`http://127.0.0.1:8080/api/update_task/${editingTask.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
+      const res = await fetchWithAuth(
+        `http://127.0.0.1:8080/api/update_task/${editingTask.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            description: editingTask.description,
+            finalizationDate: new Date(
+              editingTask.finalizationDate
+            ).toISOString(),
+            state: editingTask.state,
+            category_id: editingTask.category_id,
+          }),
         },
-        body: JSON.stringify({
-          description: editingTask.description,
-          finalizationDate: new Date(
-            editingTask.finalizationDate
-          ).toISOString(),
-          state: editingTask.state,
-          category_id: editingTask.category_id,
-        }),
-      });
+        onInvalidToken
+      );
+      if (!res) return;
       setEditingTask(null);
       loadTasks();
     } catch (err) {
@@ -127,11 +144,12 @@ export function Tareas() {
   const handleDelete = async () => {
     if (!deletingTask || !token) return;
     try {
-      await fetch(`http://127.0.0.1:8080/api/delete_task/${deletingTask.id}`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setDeletingTask(null);
+      const res = await fetchWithAuth(
+        `http://127.0.0.1:8080/api/delete_task/${deletingTask.id}`,
+        { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
+        onInvalidToken
+      );
+      if (!res) return;
       loadTasks();
     } catch (err) {
       console.error(err);

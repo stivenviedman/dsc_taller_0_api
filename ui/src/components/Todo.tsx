@@ -22,8 +22,8 @@ export const Todo: FC<AppPageProps> = ({ handleLogout }) => {
 
       {/* Dummy views */}
       <div className="flex-1 p-8">
-        {view === "tareas" && <Tareas />}
-        {view === "categorias" && <Categorias />}
+        {view === "tareas" && <Tareas onInvalidToken={handleLogout} />}
+        {view === "categorias" && <Categorias onInvalidToken={handleLogout} />}
       </div>
     </div>
   );
