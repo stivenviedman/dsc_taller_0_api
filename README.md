@@ -4,8 +4,8 @@ Taller de nivelacion del curso Desarrollo de Soluciones Cloud
 Este repositorio include todo el codigo de la app full-stack Todo. El backend desarrollado en Go se encuentra en la carpeta `backend` y el frontend
 desarrollado en Next.js se encuentra en la carpeta `./ui`
 
-# Link del video: To Do List App
-[▶️ Ver video](https://drive.google.com/file/d/1ioU0j2fi_YJqDCHRWnNkWYuH0POOhvUF/view?usp=sharing)
+# Link del video:
+[▶️ Ver video: To Do List App](https://drive.google.com/file/d/1ioU0j2fi_YJqDCHRWnNkWYuH0POOhvUF/view?usp=sharing)
 
 
 # Steps to run project 🚀
