@@ -149,4 +149,105 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 }
 ```
 
+---
+
+## Endpoints de Categorías
+
+### 1. Crear categoría
+- **URL:** `/categorias`
+- **Método:** `POST`
+- **Autenticación:** Requiere JWT Token (Bearer Token)
+- **Cuerpo de la solicitud (JSON):**
+```json
+{
+    "name": "Trabajo",
+    "description": "Tareas relacionadas con el trabajo y proyectos laborales"
+}
+```
+- **Descripción:** Crea una nueva categoría asociada al usuario autenticado. El nombre debe ser único.
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Se creó la categoría correctamente",
+    "data": {
+        "id": 3,
+        "name": "Trabajo",
+        "description": "Tareas relacionadas con el trabajo y proyectos laborales",
+        "user_id": 1
+    }
+}
+```
+- **Errores posibles:**
+  - **400 Bad Request:** Nombre o descripción vacíos
+  - **409 Conflict:** Ya existe una categoría con ese nombre
+  - **401 Unauthorized:** Token JWT inválido o faltante
+
+### 2. Obtener categorías del usuario
+- **URL:** `/categorias`
+- **Método:** `GET`
+- **Autenticación:** Requiere JWT Token (Bearer Token)
+- **Descripción:** Obtiene todas las categorías del usuario autenticado.
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Se obtuvieron las categorías del usuario correctamente",
+    "data": [
+        {
+            "id": 1,
+            "name": "Sin Categoría",
+            "description": "Tareas sin categoría",
+            "user_id": 1
+        },
+        {
+            "id": 2,
+            "name": "Personal",
+            "description": "Tareas personales y del hogar",
+            "user_id": 1
+        },
+        {
+            "id": 3,
+            "name": "Trabajo",
+            "description": "Tareas relacionadas con el trabajo y proyectos laborales",
+            "user_id": 1
+        }
+    ]
+}
+```
+- **Errores posibles:**
+  - **400 Bad Request:** Error al obtener las categorías
+  - **401 Unauthorized:** Token JWT inválido o faltante
+
+### 3. Eliminar categoría
+- **URL:** `/categorias/{categoryId}`
+- **Método:** `DELETE`
+- **Autenticación:** Requiere JWT Token (Bearer Token)
+- **Descripción:** Elimina una categoría específica. Si la categoría tiene tareas asociadas, estas se mueven automáticamente a la categoría "Sin Categoría" (ID 1). No se puede eliminar la categoría "Sin Categoría".
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Se eliminó la categoría correctamente"
+}
+```
+- **Respuesta cuando se mueven tareas:**
+```json
+{
+    "message": "Se eliminó la categoría correctamente",
+    "info": "Se movieron tareas a la categoría 'Sin Categoría'",
+    "tareas_movidas": 3
+}
+```
+- **Errores posibles:**
+  - **400 Bad Request:** Error al eliminar la categoría
+  - **403 Forbidden:** Intento de eliminar la categoría "Sin Categoría"
+  - **404 Not Found:** Categoría no encontrada
+  - **401 Unauthorized:** Token JWT inválido o faltante
+  - **500 Internal Server Error:** ID de categoría vacío o error al verificar tareas
+
+### Notas importantes sobre categorías:
+- **Categoría "Sin Categoría":** Esta categoría (ID 1) es especial y no se puede eliminar
+- **Unicidad:** Los nombres de categorías deben ser únicos por usuario
+- **Tareas asociadas:** Al eliminar una categoría, las tareas se mueven automáticamente a "Sin Categoría"
+- **Autenticación:** Todos los endpoints de categorías requieren un token JWT válido
+- **Validaciones:** Se valida que el nombre y descripción no estén vacíos
+
 
