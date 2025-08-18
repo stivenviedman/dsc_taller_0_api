@@ -22,7 +22,65 @@ Esta API permite gestionar tareas (`Tasks`) asociadas a usuarios y categorías. 
 
 ---
 
-## Endpoints
+
+## Endpoints de Autenticación:
+
+### 1. Crear usuarios
+- **URL:** `/create_users`
+- **Metodo:** `POST`
+- **Autenticación:** No requiere autenticación con token
+- **Cuerpo de la solicitud (JSON):**
+```json
+{
+    "userName": "andresG",
+    "password": "98765",
+    "image": "/home/imagenes/perfil2.jpg"
+}
+```
+- **Descripción:** Registra los usuarios en la base de datos, basado en un nombre de usuario, contraseña y una ruta para imagen de perfil (en caso de que requieran) y entrega el token para que el usuario navegue en la aplicación con un tiempo de expiración de 15 minutos.
+
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Se creo el user correctamente",
+    "token": "eyJhbGci...."
+}
+```
+- **Errores posibles:**
+  - **422 Unprocessable Entity:** request failed
+  - **400 Bad Request:** No se puede validar usuario existente
+  - **409 Conflict:** Ya existen perfiles con ese nombre de usuario
+  - **500 Internal Server Error:** No se pudo crear el user
+  - **500 Internal Server Error:** No se pudo generar el token
+
+### 2. Login de usuarios
+- **URL:** `/login_users`
+- **Metodo:** `POST`
+- **Autenticación:** No requiere autenticación con token
+- **Cuerpo de la solicitud (JSON):**
+```json
+{
+    "userName": "andresG",
+    "password": "98765"
+}
+```
+- **Descripción:** Permite el ingreso de los usuarios ya registrados a la aplicación, basado en el nombre de usuario y contraseña. Entrega el token para que el usuario navegue en la aplicación con un tiempo de expiración de 15 minutos y la ruta con la imagen de perfil (si la tiene).
+
+- **Respuesta exitosa STATUS 200 OK:**
+```json
+{
+    "message": "Ingreso exitoso",
+    "token": "eyJhbGci....",
+    "image": "/home/imagenes/perfil2.jpg"
+}
+```
+- **Errores posibles:**
+  - **422 Unprocessable Entity:** Datos inválidos
+  - **500 Internal Server Error:** No se pudo encontrar el usuario
+  - **403 Forbidden:** Contraseña incorrecta
+  - **500 Internal Server Error:** No se pudo generar el token
+
+## Endpoints de Tareas
 
 ### 1. Obtener todos los tasks por UserId
 - **URL:** `/user_tasks/`

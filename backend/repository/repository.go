@@ -33,7 +33,7 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 
 	if query.Error != nil {
 		return context.Status(http.StatusBadRequest).JSON(
-			&fiber.Map{"message": "No se puede validar"})
+			&fiber.Map{"message": "No se puede validar usuario existente"})
 	}
 
 	if query.RowsAffected != 0 {
@@ -44,7 +44,7 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 	errCreate := r.DB.Create(&user).Error
 
 	if errCreate != nil {
-		context.Status(http.StatusBadRequest).JSON(
+		context.Status(http.StatusInternalServerError).JSON(
 			&fiber.Map{"message": "No se pudo crear el user"})
 
 		return err
@@ -63,13 +63,13 @@ func (r *Repository) CreateUser(context *fiber.Ctx) error {
 	token, errToken := middlewares.GenerarToken(*user.Username, dbuser.ID)
 
 	if errToken != nil {
-		context.Status(http.StatusBadRequest).JSON(
+		context.Status(http.StatusInternalServerError).JSON(
 			&fiber.Map{"message": "No se pudo generar el token"})
 		return errToken
 	}
 
 	return context.Status(http.StatusOK).JSON(
-		&fiber.Map{"message": "Se creo el user correctamente",
+		&fiber.Map{"message": "Se creo el usuario correctamente",
 			"token": token})
 }
 
@@ -90,7 +90,7 @@ func (r *Repository) LoginUser(context *fiber.Ctx) error {
 	errSelect := r.DB.Where("username = ?", user.Username).First(&dbuser).Error
 
 	if errSelect != nil {
-		context.Status(http.StatusBadRequest).JSON(
+		context.Status(http.StatusInternalServerError).JSON(
 			&fiber.Map{"message": "No se pudo encontrar el usuario"})
 
 		return errSelect
@@ -105,7 +105,7 @@ func (r *Repository) LoginUser(context *fiber.Ctx) error {
 	token, errToken := middlewares.GenerarToken(*dbuser.Username, dbuser.ID)
 
 	if errToken != nil {
-		context.Status(http.StatusBadRequest).JSON(
+		context.Status(http.StatusInternalServerError).JSON(
 			&fiber.Map{"message": "No se pudo generar el token"})
 
 		return errToken
