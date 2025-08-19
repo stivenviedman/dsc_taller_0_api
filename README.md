@@ -6,10 +6,10 @@ desarrollado en Next.js se encuentra en la carpeta `./ui`
 
 # Entregado por 
 
-- Stiven Andres Viedman Agudelo
-- Gabriel Gomez Corredor
-- Andres Felipe Gamez Vargas
-- Andres Felipe Chaparro Diaz
+- Stiven Andres Viedman Agudelo - s.viedman@uniandes.edu.co
+- Gabriel Gomez Corredor - g.gomez1@uniandes.edu.co
+- Andres Felipe Gamez Vargas - a.gamezv@uniandes.edu.co
+- Andres Felipe Chaparro Diaz - a.chaparrod@uniandes.edu.co
 
 # Link del video:
 [▶️ Ver video: To Do List App](https://drive.google.com/file/d/1ioU0j2fi_YJqDCHRWnNkWYuH0POOhvUF/view?usp=sharing)
